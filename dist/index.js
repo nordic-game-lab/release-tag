@@ -5304,6 +5304,7 @@ function run() {
             if (bodyCommand) {
                 const { stdout } = yield execa_1.command(bodyCommand, {
                     stdio: 'pipe',
+                    shell: true,
                 });
                 body = stdout;
                 console.log('Changelog body:');

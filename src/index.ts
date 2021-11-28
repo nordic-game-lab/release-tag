@@ -22,6 +22,7 @@ async function run() {
     if (bodyCommand) {
       const { stdout } = await execaCommand(bodyCommand, {
         stdio: 'pipe',
+        shell: true,
       })
       body = stdout
       console.log('Changelog body:')
