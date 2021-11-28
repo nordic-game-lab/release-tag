@@ -25,7 +25,6 @@ async function run() {
         shell: true,
       })
       body = result.stdout
-      console.log(result, process.cwd())
       console.log('Changelog body:')
       console.log(result.stdout)
     } else {
