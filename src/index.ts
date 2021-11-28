@@ -20,13 +20,14 @@ async function run() {
     const bodyCommand = core.getInput('body_command', { required: false }) || null
     let body: string
     if (bodyCommand) {
-      const { stdout } = await execaCommand(bodyCommand, {
+      const result = await execaCommand(bodyCommand, {
         stdio: 'pipe',
         shell: true,
       })
-      body = stdout
+      body = result.stdout
+      console.log(result)
       console.log('Changelog body:')
-      console.log(stdout)
+      console.log(result.stdout)
     } else {
       body = ''
     }

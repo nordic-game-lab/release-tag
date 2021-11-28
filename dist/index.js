@@ -5302,13 +5302,14 @@ function run() {
             const bodyCommand = core.getInput('body_command', { required: false }) || null;
             let body;
             if (bodyCommand) {
-                const { stdout } = yield execa_1.command(bodyCommand, {
+                const result = yield execa_1.command(bodyCommand, {
                     stdio: 'pipe',
                     shell: true,
                 });
-                body = stdout;
+                body = result.stdout;
+                console.log(result);
                 console.log('Changelog body:');
-                console.log(stdout);
+                console.log(result.stdout);
             }
             else {
                 body = '';
