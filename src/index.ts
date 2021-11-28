@@ -24,6 +24,8 @@ async function run() {
         stdio: 'pipe',
       })
       body = stdout
+      console.log('Changelog body:')
+      console.log(stdout)
     } else {
       body = ''
     }
