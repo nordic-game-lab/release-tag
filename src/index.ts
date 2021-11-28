@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { GitHub, context } from '@actions/github'
-import { execaCommand } from 'execa'
+import { command as execaCommand } from 'execa'
 
 async function run() {
   try {
