@@ -1,5 +1,6 @@
-const core = require('@actions/core')
-const { GitHub, context } = require('@actions/github')
+import * as core from '@actions/core'
+import { GitHub, context } from '@actions/github'
+import { execaCommand } from 'execa'
 
 async function run() {
   try {
@@ -16,7 +17,16 @@ async function run() {
     const tag = tagName.replace('refs/tags/', '')
     const releaseName =
       core.getInput('release_name', { required: false }) || tag
-    const body = core.getInput('body', { required: false }) || ''
+    const bodyCommand = core.getInput('body_command', { required: false }) || null
+    let body: string
+    if (bodyCommand) {
+      const { stdout } = await execaCommand(bodyCommand, {
+        stdio: 'pipe',
+      })
+      body = stdout
+    } else {
+      body = ''
+    }
     const draft = core.getInput('draft', { required: false }) === 'true'
     const prerelease = /\d-[a-z]/.test(tag)
 

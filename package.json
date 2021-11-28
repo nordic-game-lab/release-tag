@@ -2,15 +2,16 @@
   "name": "release-tag",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "author": "Evan You",
+  "main": "dist/index.js",
+  "author": "Guillaume CHAU",
   "license": "MIT",
   "scripts": {
-    "build": "ncc build index.js"
+    "build": "ncc build src/index.ts"
   },
   "dependencies": {
     "@actions/core": "^1.2.3",
-    "@actions/github": "^2.1.1"
+    "@actions/github": "^2.1.1",
+    "execa": "^6.0.0"
   },
   "devDependencies": {
     "@zeit/ncc": "^0.22.1"

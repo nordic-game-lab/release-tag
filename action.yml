@@ -7,8 +7,8 @@ inputs:
   release_name:
     description: 'The name of the release. For example, `Release v1.0.1`'
     required: false
-  body:
-    description: 'Text describing the contents of the tag.'
+  body_command:
+    description: 'Command to retrieve the text describing the contents of the tag.'
     required: false
   draft:
     description: '`true` to create a draft (unpublished) release, `false` to create a published one. Default: `false`'
