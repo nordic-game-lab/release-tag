@@ -35,7 +35,7 @@ jobs:
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-v3
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}-v1
           restore-keys: |
             ${{ runner.os }}-yarn-
       
@@ -43,7 +43,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: '**/node_modules'
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}-v3
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}-v1
       
       - name: Install
         run: yarn --frozen-lockfile --prefer-offline 
