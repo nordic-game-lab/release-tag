@@ -569,15 +569,99 @@ module.exports._enoent = enoent;
 
 
 /***/ }),
-/* 21 */,
+/* 21 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(551)
+const parserOpts = __webpack_require__(127)
+const recommendedBumpOpts = __webpack_require__(590)
+const writerOpts = __webpack_require__(596)
+
+module.exports = presetOpts
+
+function presetOpts (cb) {
+  Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+    .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+      cb(null, { gitRawCommitsOpts: { noMerges: null }, conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts })
+    })
+}
+
+
+/***/ }),
 /* 22 */,
 /* 23 */,
-/* 24 */,
+/* 24 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+var arrayify = __webpack_require__(877);
+var dotPropGet = __webpack_require__(593).get;
+
+function compareFunc(prop) {
+  return function(a, b) {
+    var ret = 0;
+
+    arrayify(prop).some(function(el) {
+      var x;
+      var y;
+
+      if (typeof el === 'function') {
+        x = el(a);
+        y = el(b);
+      } else if (typeof el === 'string') {
+        x = dotPropGet(a, el);
+        y = dotPropGet(b, el);
+      } else {
+        x = a;
+        y = b;
+      }
+
+      if (x === y) {
+        ret = 0;
+        return;
+      }
+
+      if (typeof x === 'string' && typeof y === 'string') {
+        ret = x.localeCompare(y);
+        return ret !== 0;
+      }
+
+      ret = x < y ? -1 : 1;
+      return true;
+    });
+
+    return ret;
+  };
+}
+
+module.exports = compareFunc;
+
+
+/***/ }),
 /* 25 */,
 /* 26 */,
 /* 27 */,
 /* 28 */,
-/* 29 */,
+/* 29 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^(\w*): (.*)$/,
+  headerCorrespondence: [
+    'component',
+    'shortDesc'
+  ]
+}
+
+
+/***/ }),
 /* 30 */,
 /* 31 */,
 /* 32 */
@@ -1957,7 +2041,22 @@ function unsafe (val, doUnesc) {
 
 /***/ }),
 /* 63 */,
-/* 64 */,
+/* 64 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^(\w*):\s*(.*)$/,
+  headerCorrespondence: [
+    'tag',
+    'message'
+  ]
+}
+
+
+/***/ }),
 /* 65 */,
 /* 66 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -3638,7 +3737,59 @@ exports.SourceMapGenerator = SourceMapGenerator;
 /* 111 */,
 /* 112 */,
 /* 113 */,
-/* 114 */,
+/* 114 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template5.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header5.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit5.hbs", 'utf-8')
+])
+  .spread((template, header, commit) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      if (!commit.emoji || typeof commit.emoji !== 'string') {
+        return
+      }
+
+      commit.emoji = commit.emoji.substring(0, 72)
+      const emojiLength = commit.emoji.length
+
+      if (typeof commit.hash === 'string') {
+        commit.shortHash = commit.hash.substring(0, 7)
+      }
+
+      if (typeof commit.shortDesc === 'string') {
+        commit.shortDesc = commit.shortDesc.substring(0, 72 - emojiLength)
+      }
+
+      return commit
+    },
+    groupBy: 'emoji',
+    commitGroupsSort: 'title',
+    commitsSort: ['emoji', 'shortDesc']
+  }
+}
+
+
+/***/ }),
 /* 115 */,
 /* 116 */,
 /* 117 */,
@@ -4645,8 +4796,42 @@ module.exports = uniq;
 
 
 /***/ }),
-/* 127 */,
-/* 128 */,
+/* 127 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  mergePattern: /^Merge pull request #(.*) from .*$/,
+  mergeCorrespondence: ['pr'],
+  headerPattern: /^\[(.*) (.*)] (.*)$/,
+  headerCorrespondence: [
+    'tag',
+    'taggedAs',
+    'message'
+  ]
+}
+
+
+/***/ }),
+/* 128 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(29)
+const writerOpts = __webpack_require__(642)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 129 */
 /***/ (function(module) {
 
@@ -5059,7 +5244,45 @@ module.exports = function resolve(x, options, callback) {
 /* 136 */,
 /* 137 */,
 /* 138 */,
-/* 139 */,
+/* 139 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(279)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: breakings === 1
+        ? `There is ${breakings} BREAKING CHANGE and ${features} features`
+        : `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 140 */,
 /* 141 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
@@ -5373,10 +5596,10 @@ function conventionalChangelogWriterInit (context, options) {
     includeDetails: false,
     ignoreReverted: true,
     doFlush: true,
-    mainTemplate: readFileSync(__webpack_require__.ab + "template.hbs", 'utf-8'),
-    headerPartial: readFileSync(__webpack_require__.ab + "header.hbs", 'utf-8'),
-    commitPartial: readFileSync(__webpack_require__.ab + "commit.hbs", 'utf-8'),
-    footerPartial: readFileSync(__webpack_require__.ab + "footer.hbs", 'utf-8')
+    mainTemplate: readFileSync(__webpack_require__.ab + "template8.hbs", 'utf-8'),
+    headerPartial: readFileSync(__webpack_require__.ab + "header8.hbs", 'utf-8'),
+    commitPartial: readFileSync(__webpack_require__.ab + "commit8.hbs", 'utf-8'),
+    footerPartial: readFileSync(__webpack_require__.ab + "footer2.hbs", 'utf-8')
   }, options)
 
   if ((!_.isFunction(options.transform) && _.isObject(options.transform)) || _.isUndefined(options.transform)) {
@@ -5690,7 +5913,23 @@ module.exports = isArrayLike;
 
 
 /***/ }),
-/* 147 */,
+/* 147 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^\[\[(.*)]] (.*)$/,
+  headerCorrespondence: [
+    'type',
+    'shortDesc'
+  ],
+  noteKeywords: 'BREAKING CHANGE'
+}
+
+
+/***/ }),
 /* 148 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -5761,7 +6000,52 @@ module.exports = arrayLikeKeys;
 /***/ }),
 /* 150 */,
 /* 151 */,
-/* 152 */,
+/* 152 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template6.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header6.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit6.hbs", 'utf-8')
+])
+  .spread((template, header, commit) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      if (!commit.language) {
+        return
+      }
+
+      if (typeof commit.hash === 'string') {
+        commit.shortHash = commit.hash.substring(0, 7)
+      }
+
+      return commit
+    },
+    groupBy: 'language',
+    commitGroupsSort: 'title',
+    commitsSort: ['language', 'type', 'message']
+  }
+}
+
+
+/***/ }),
 /* 153 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -6147,9 +6431,66 @@ module.exports = opts => {
 
 
 /***/ }),
-/* 169 */,
+/* 169 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(372)
+const parserOpts = __webpack_require__(64)
+const recommendedBumpOpts = __webpack_require__(738)
+const writerOpts = __webpack_require__(566)
+
+module.exports = presetOpts
+
+function presetOpts (cb) {
+  Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+    .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+      cb(null, { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts })
+    })
+}
+
+
+/***/ }),
 /* 170 */,
-/* 171 */,
+/* 171 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(147)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 172 */,
 /* 173 */,
 /* 174 */
@@ -6484,7 +6825,28 @@ function authenticationPlugin(octokit, options) {
 /* 192 */,
 /* 193 */,
 /* 194 */,
-/* 195 */,
+/* 195 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(331)
+const parserOpts = __webpack_require__(395)
+const recommendedBumpOpts = __webpack_require__(377)
+const writerOpts = __webpack_require__(152)
+
+module.exports = presetOpts
+
+function presetOpts (cb) {
+  Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+    .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+      cb(null, { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts })
+    })
+}
+
+
+/***/ }),
 /* 196 */,
 /* 197 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -6533,7 +6895,23 @@ function checkMode (stat, options) {
 
 
 /***/ }),
-/* 198 */,
+/* 198 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(792)
+const writerOpts = __webpack_require__(812)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 199 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -8591,7 +8969,28 @@ InternalDecoderCesu8.prototype.end = function() {
 
 
 /***/ }),
-/* 239 */,
+/* 239 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(128)
+const parserOpts = __webpack_require__(29)
+const recommendedBumpOpts = __webpack_require__(573)
+const writerOpts = __webpack_require__(642)
+
+module.exports = presetOpts
+
+function presetOpts (cb) {
+  Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+    .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+      cb(null, { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts })
+    })
+}
+
+
+/***/ }),
 /* 240 */,
 /* 241 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -12167,7 +12566,26 @@ exports.decode = function base64VLQ_decode(aStr, aIndex, aOutParam) {
 
 /***/ }),
 /* 278 */,
-/* 279 */,
+/* 279 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^(\w*)(?:\((.*)\))?: (.*)$/,
+  headerCorrespondence: [
+    'type',
+    'scope',
+    'subject'
+  ],
+  noteKeywords: ['BREAKING CHANGE'],
+  revertPattern: /^(?:Revert|revert:)\s"?([\s\S]+?)"?\s*This reverts commit (\w*)\./i,
+  revertCorrespondence: ['header', 'hash']
+}
+
+
+/***/ }),
 /* 280 */
 /***/ (function(module, exports) {
 
@@ -14515,7 +14933,22 @@ module.exports = require("string_decoder");
 
 /***/ }),
 /* 305 */,
-/* 306 */,
+/* 306 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^(:.*?:) (.*)$/,
+  headerCorrespondence: [
+    'emoji',
+    'shortDesc'
+  ]
+}
+
+
+/***/ }),
 /* 307 */,
 /* 308 */,
 /* 309 */,
@@ -15360,7 +15793,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const core = __importStar(__webpack_require__(470));
 const github_1 = __webpack_require__(469);
 const conventional_changelog_1 = __importDefault(__webpack_require__(486));
+const conventional_changelog_angular_1 = __importDefault(__webpack_require__(746));
+const conventional_changelog_atom_1 = __importDefault(__webpack_require__(795));
+const conventional_changelog_codemirror_1 = __importDefault(__webpack_require__(195));
+const conventional_changelog_ember_1 = __importDefault(__webpack_require__(21));
+const conventional_changelog_eslint_1 = __importDefault(__webpack_require__(169));
+const conventional_changelog_express_1 = __importDefault(__webpack_require__(239));
+const conventional_changelog_jquery_1 = __importDefault(__webpack_require__(980));
+const conventional_changelog_jshint_1 = __importDefault(__webpack_require__(962));
 const util_1 = __webpack_require__(322);
+const changelogPresets = {
+    angular: conventional_changelog_angular_1.default,
+    atom: conventional_changelog_atom_1.default,
+    codemirror: conventional_changelog_codemirror_1.default,
+    ember: conventional_changelog_ember_1.default,
+    eslint: conventional_changelog_eslint_1.default,
+    express: conventional_changelog_express_1.default,
+    jquery: conventional_changelog_jquery_1.default,
+    jshint: conventional_changelog_jshint_1.default,
+};
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
@@ -15376,13 +15827,14 @@ function run() {
             const releaseName = core.getInput('release_name', { required: false }) || tag;
             const preset = (_a = core.getInput('preset', { required: false })) !== null && _a !== void 0 ? _a : undefined;
             const changelogResult = conventional_changelog_1.default({
-                preset,
+                config: preset ? changelogPresets[preset] : undefined,
                 releaseCount: 2,
             });
             let body = yield util_1.readStream(changelogResult);
             let lines = body.split('\n');
             // Cleanup output
-            lines = lines.filter(line => !line.includes(tag));
+            const tagFilter = tag.replace('v', '');
+            lines = lines.filter(line => !line.includes(tagFilter));
             body = lines.join('\n').trim();
             console.log('Changelog body:');
             console.log(body);
@@ -15415,7 +15867,23 @@ run();
 /* 328 */,
 /* 329 */,
 /* 330 */,
-/* 331 */,
+/* 331 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(395)
+const writerOpts = __webpack_require__(152)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 332 */,
 /* 333 */,
 /* 334 */,
@@ -16272,12 +16740,64 @@ function deprecate (message) {
 
 /***/ }),
 /* 371 */,
-/* 372 */,
+/* 372 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(64)
+const writerOpts = __webpack_require__(566)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 373 */,
 /* 374 */,
 /* 375 */,
 /* 376 */,
-/* 377 */,
+/* 377 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(395)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 378 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -17042,7 +17562,23 @@ module.exports = overArg;
 
 /***/ }),
 /* 394 */,
-/* 395 */,
+/* 395 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^\[(.*?)(?: (.*))?] (.*)$/,
+  headerCorrespondence: [
+    'language',
+    'type',
+    'message'
+  ]
+}
+
+
+/***/ }),
 /* 396 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -17055,7 +17591,23 @@ module.exports = coreJsData;
 
 
 /***/ }),
-/* 397 */,
+/* 397 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(306)
+const writerOpts = __webpack_require__(114)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 398 */,
 /* 399 */,
 /* 400 */,
@@ -17728,7 +18280,23 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 422 */,
+/* 422 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(147)
+const writerOpts = __webpack_require__(849)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 423 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -23074,7 +23642,122 @@ module.exports = nativeKeysIn;
 
 /***/ }),
 /* 541 */,
-/* 542 */,
+/* 542 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const compareFunc = __webpack_require__(24)
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template7.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header7.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit7.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "footer1.hbs", 'utf-8')
+])
+  .spread((template, header, commit, footer) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+    writerOpts.footerPartial = footer
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit, context) => {
+      let discard = true
+      const issues = []
+
+      commit.notes.forEach(note => {
+        note.title = 'BREAKING CHANGES'
+        discard = false
+      })
+
+      if (commit.type === 'feat') {
+        commit.type = 'Features'
+      } else if (commit.type === 'fix') {
+        commit.type = 'Bug Fixes'
+      } else if (commit.type === 'perf') {
+        commit.type = 'Performance Improvements'
+      } else if (commit.type === 'revert' || commit.revert) {
+        commit.type = 'Reverts'
+      } else if (discard) {
+        return
+      } else if (commit.type === 'docs') {
+        commit.type = 'Documentation'
+      } else if (commit.type === 'style') {
+        commit.type = 'Styles'
+      } else if (commit.type === 'refactor') {
+        commit.type = 'Code Refactoring'
+      } else if (commit.type === 'test') {
+        commit.type = 'Tests'
+      } else if (commit.type === 'build') {
+        commit.type = 'Build System'
+      } else if (commit.type === 'ci') {
+        commit.type = 'Continuous Integration'
+      }
+
+      if (commit.scope === '*') {
+        commit.scope = ''
+      }
+
+      if (typeof commit.hash === 'string') {
+        commit.shortHash = commit.hash.substring(0, 7)
+      }
+
+      if (typeof commit.subject === 'string') {
+        let url = context.repository
+          ? `${context.host}/${context.owner}/${context.repository}`
+          : context.repoUrl
+        if (url) {
+          url = `${url}/issues/`
+          // Issue URLs.
+          commit.subject = commit.subject.replace(/#([0-9]+)/g, (_, issue) => {
+            issues.push(issue)
+            return `[#${issue}](${url}${issue})`
+          })
+        }
+        if (context.host) {
+          // User URLs.
+          commit.subject = commit.subject.replace(/\B@([a-z0-9](?:-?[a-z0-9/]){0,38})/g, (_, username) => {
+            if (username.includes('/')) {
+              return `@${username}`
+            }
+
+            return `[@${username}](${context.host}/${username})`
+          })
+        }
+      }
+
+      // remove references that already appear in the subject
+      commit.references = commit.references.filter(reference => {
+        if (issues.indexOf(reference.issue) === -1) {
+          return true
+        }
+
+        return false
+      })
+
+      return commit
+    },
+    groupBy: 'type',
+    commitGroupsSort: 'title',
+    commitsSort: ['scope', 'subject'],
+    noteGroupsSort: 'title',
+    notesSort: compareFunc
+  }
+}
+
+
+/***/ }),
 /* 543 */
 /***/ (function(module) {
 
@@ -23317,7 +24000,23 @@ function getNextPage (octokit, link, headers) {
 
 
 /***/ }),
-/* 551 */,
+/* 551 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(127)
+const writerOpts = __webpack_require__(596)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 552 */,
 /* 553 */
 /***/ (function(module) {
@@ -42367,7 +43066,50 @@ function getPreviousPage (octokit, link, headers) {
 /***/ }),
 /* 564 */,
 /* 565 */,
-/* 566 */,
+/* 566 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template3.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header3.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit3.hbs", 'utf-8')
+])
+  .spread((template, header, commit) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      if (!commit.tag || typeof commit.tag !== 'string') {
+        return
+      }
+
+      commit.shortHash = commit.hash.substring(0, 7)
+
+      return commit
+    },
+    groupBy: 'tag',
+    commitGroupsSort: 'title',
+    commitsSort: ['tag', 'message']
+  }
+}
+
+
+/***/ }),
 /* 567 */,
 /* 568 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -42818,7 +43560,43 @@ module.exports = dargs;
 /***/ }),
 /* 571 */,
 /* 572 */,
-/* 573 */,
+/* 573 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(29)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 574 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -43684,13 +44462,256 @@ module.exports = function (Yallist) {
 
 
 /***/ }),
-/* 590 */,
+/* 590 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(127)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 591 */,
 /* 592 */,
-/* 593 */,
+/* 593 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const isObj = __webpack_require__(804);
+
+const disallowedKeys = [
+	'__proto__',
+	'prototype',
+	'constructor'
+];
+
+const isValidPath = pathSegments => !pathSegments.some(segment => disallowedKeys.includes(segment));
+
+function getPathSegments(path) {
+	const pathArray = path.split('.');
+	const parts = [];
+
+	for (let i = 0; i < pathArray.length; i++) {
+		let p = pathArray[i];
+
+		while (p[p.length - 1] === '\\' && pathArray[i + 1] !== undefined) {
+			p = p.slice(0, -1) + '.';
+			p += pathArray[++i];
+		}
+
+		parts.push(p);
+	}
+
+	if (!isValidPath(parts)) {
+		return [];
+	}
+
+	return parts;
+}
+
+module.exports = {
+	get(object, path, value) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return value === undefined ? object : value;
+		}
+
+		const pathArray = getPathSegments(path);
+		if (pathArray.length === 0) {
+			return;
+		}
+
+		for (let i = 0; i < pathArray.length; i++) {
+			if (!Object.prototype.propertyIsEnumerable.call(object, pathArray[i])) {
+				return value;
+			}
+
+			object = object[pathArray[i]];
+
+			if (object === undefined || object === null) {
+				// `object` is either `undefined` or `null` so we want to stop the loop, and
+				// if this is not the last bit of the path, and
+				// if it did't return `undefined`
+				// it would return `null` if `object` is `null`
+				// but we want `get({foo: null}, 'foo.bar')` to equal `undefined`, or the supplied value, not `null`
+				if (i !== pathArray.length - 1) {
+					return value;
+				}
+
+				break;
+			}
+		}
+
+		return object;
+	},
+
+	set(object, path, value) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return object;
+		}
+
+		const root = object;
+		const pathArray = getPathSegments(path);
+
+		for (let i = 0; i < pathArray.length; i++) {
+			const p = pathArray[i];
+
+			if (!isObj(object[p])) {
+				object[p] = {};
+			}
+
+			if (i === pathArray.length - 1) {
+				object[p] = value;
+			}
+
+			object = object[p];
+		}
+
+		return root;
+	},
+
+	delete(object, path) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return false;
+		}
+
+		const pathArray = getPathSegments(path);
+
+		for (let i = 0; i < pathArray.length; i++) {
+			const p = pathArray[i];
+
+			if (i === pathArray.length - 1) {
+				delete object[p];
+				return true;
+			}
+
+			object = object[p];
+
+			if (!isObj(object)) {
+				return false;
+			}
+		}
+	},
+
+	has(object, path) {
+		if (!isObj(object) || typeof path !== 'string') {
+			return false;
+		}
+
+		const pathArray = getPathSegments(path);
+		if (pathArray.length === 0) {
+			return false;
+		}
+
+		// eslint-disable-next-line unicorn/no-for-loop
+		for (let i = 0; i < pathArray.length; i++) {
+			if (isObj(object)) {
+				if (!(pathArray[i] in object)) {
+					return false;
+				}
+
+				object = object[pathArray[i]];
+			} else {
+				return false;
+			}
+		}
+
+		return true;
+	}
+};
+
+
+/***/ }),
 /* 594 */,
 /* 595 */,
-/* 596 */,
+/* 596 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template4.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header4.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit4.hbs", 'utf-8')
+])
+  .spread((template, header, commit) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      if (!commit.pr) {
+        return
+      }
+
+      if (commit.tag === 'BUGFIX') {
+        commit.tag = 'Bug Fixes'
+      } else if (commit.tag === 'CLEANUP') {
+        commit.tag = 'Cleanup'
+      } else if (commit.tag === 'FEATURE') {
+        commit.tag = 'Features'
+      } else if (commit.tag === 'DOC') {
+        commit.tag = 'Documentation'
+      } else if (commit.tag === 'SECURITY') {
+        commit.tag = 'Security'
+      } else {
+        return
+      }
+
+      if (typeof commit.hash === 'string') {
+        commit.shortHash = commit.hash.substring(0, 7)
+      }
+
+      return commit
+    },
+    groupBy: 'tag',
+    commitGroupsSort: 'title',
+    commitsSort: ['tag', 'taggedAs', 'message']
+  }
+}
+
+
+/***/ }),
 /* 597 */,
 /* 598 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
@@ -47751,7 +48772,52 @@ module.exports = [["0","\u0000",128],["a1","｡",62],["8140","　、。，．・
 
 /***/ }),
 /* 641 */,
-/* 642 */,
+/* 642 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template1.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header1.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit1.hbs", 'utf-8')
+])
+  .spread((template, header, commit) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      if (commit.component === 'perf') {
+        commit.component = 'Performance'
+      } else if (commit.component === 'deps') {
+        commit.component = 'Dependencies'
+      } else {
+        return
+      }
+
+      return commit
+    },
+    groupBy: 'component',
+    commitGroupsSort: 'title',
+    commitsSort: ['component', 'shortDesc']
+  }
+}
+
+
+/***/ }),
 /* 643 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -51164,7 +52230,45 @@ module.exports = exports["default"];
 
 /***/ }),
 /* 737 */,
-/* 738 */,
+/* 738 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(64)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: commits => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (!commit.tag) return
+
+      if (commit.tag.toLowerCase() === 'breaking') {
+        breakings += 1
+        level = 0
+      } else if (commit.tag.toLowerCase() === 'new') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} breaking changes and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 739 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -51405,7 +52509,24 @@ module.exports = [["a140","",62],["a180","",32],["a240","",62],["a280",
 module.exports = {"repositories":"'repositories' (plural) Not supported. Please pick one as the 'repository' field","missingRepository":"No repository field.","brokenGitUrl":"Probably broken git url: %s","nonObjectScripts":"scripts must be an object","nonStringScript":"script values must be string commands","nonArrayFiles":"Invalid 'files' member","invalidFilename":"Invalid filename in 'files' list: %s","nonArrayBundleDependencies":"Invalid 'bundleDependencies' list. Must be array of package names","nonStringBundleDependency":"Invalid bundleDependencies member: %s","nonDependencyBundleDependency":"Non-dependency in bundleDependencies: %s","nonObjectDependencies":"%s field must be an object","nonStringDependency":"Invalid dependency: %s %s","deprecatedArrayDependencies":"specifying %s as array is deprecated","deprecatedModules":"modules field is deprecated","nonArrayKeywords":"keywords should be an array of strings","nonStringKeyword":"keywords should be an array of strings","conflictingName":"%s is also the name of a node core module.","nonStringDescription":"'description' field should be a string","missingDescription":"No description","missingReadme":"No README data","missingLicense":"No license field.","nonEmailUrlBugsString":"Bug string field must be url, email, or {email,url}","nonUrlBugsUrlField":"bugs.url field must be a string url. Deleted.","nonEmailBugsEmailField":"bugs.email field must be a string email. Deleted.","emptyNormalizedBugs":"Normalized value of bugs field is an empty object. Deleted.","nonUrlHomepage":"homepage field must be a string url. Deleted.","invalidLicense":"license should be a valid SPDX license expression","typo":"%s should probably be %s."};
 
 /***/ }),
-/* 746 */,
+/* 746 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(889)
+const parserOpts = __webpack_require__(279)
+const recommendedBumpOpts = __webpack_require__(139)
+const writerOpts = __webpack_require__(542)
+
+module.exports = Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+  .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+    return { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 747 */
 /***/ (function(module) {
 
@@ -51968,10 +53089,46 @@ PrintVisitor.prototype.HashPair = function (pair) {
 /* 789 */,
 /* 790 */,
 /* 791 */,
-/* 792 */,
+/* 792 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = {
+  headerPattern: /^(\w*): (.*)$/,
+  headerCorrespondence: [
+    'component',
+    'shortDesc'
+  ]
+}
+
+
+/***/ }),
 /* 793 */,
 /* 794 */,
-/* 795 */,
+/* 795 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(397)
+const parserOpts = __webpack_require__(306)
+const recommendedBumpOpts = __webpack_require__(919)
+const writerOpts = __webpack_require__(114)
+
+module.exports = presetOpts
+
+function presetOpts (cb) {
+  Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+    .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+      cb(null, { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts })
+    })
+}
+
+
+/***/ }),
 /* 796 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
 
@@ -52229,7 +53386,19 @@ module.exports = (obj, opts) => {
 
 /***/ }),
 /* 803 */,
-/* 804 */,
+/* 804 */
+/***/ (function(module) {
+
+"use strict";
+
+
+module.exports = value => {
+	const type = typeof value;
+	return value !== null && (type === 'object' || type === 'function');
+};
+
+
+/***/ }),
 /* 805 */,
 /* 806 */
 /***/ (function(module) {
@@ -52268,7 +53437,58 @@ module.exports = isArray;
 /* 809 */,
 /* 810 */,
 /* 811 */,
-/* 812 */,
+/* 812 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit.hbs", 'utf-8')
+])
+  .spread((template, header, commit) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      if (!commit.component || typeof commit.component !== 'string') {
+        return
+      }
+
+      if (typeof commit.hash === 'string') {
+        commit.shortHash = commit.hash.substring(0, 7)
+      }
+
+      commit.references.forEach(function (reference) {
+        if (reference.prefix === '#') {
+          reference.originalIssueTracker = 'https://bugs.jquery.com/ticket/'
+        }
+      })
+
+      return commit
+    },
+    groupBy: 'component',
+    commitGroupsSort: 'title',
+    commitsSort: ['component', 'shortDesc']
+  }
+}
+
+
+/***/ }),
 /* 813 */
 /***/ (function(__unusedmodule, exports) {
 
@@ -67588,7 +68808,69 @@ function coerce (version, options) {
 
 
 /***/ }),
-/* 849 */,
+/* 849 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const compareFunc = __webpack_require__(24)
+const Q = __webpack_require__(885)
+const readFile = Q.denodeify(__webpack_require__(747).readFile)
+const resolve = __webpack_require__(622).resolve
+
+module.exports = Q.all([
+  readFile(__webpack_require__.ab + "template2.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "header2.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "commit2.hbs", 'utf-8'),
+  readFile(__webpack_require__.ab + "footer.hbs", 'utf-8')
+])
+  .spread((template, header, commit, footer) => {
+    const writerOpts = getWriterOpts()
+
+    writerOpts.mainTemplate = template
+    writerOpts.headerPartial = header
+    writerOpts.commitPartial = commit
+    writerOpts.footerPartial = footer
+
+    return writerOpts
+  })
+
+function getWriterOpts () {
+  return {
+    transform: (commit) => {
+      const type = commit.type ? commit.type.toUpperCase() : ''
+
+      if (type === 'FEAT') {
+        commit.type = 'Features'
+      } else if (type === 'FIX') {
+        commit.type = 'Bug Fixes'
+      } else {
+        return
+      }
+
+      if (typeof commit.hash === 'string') {
+        commit.hash = commit.hash.substring(0, 7)
+      }
+
+      commit.notes.forEach(note => {
+        if (note.title === 'BREAKING CHANGE') {
+          note.title = 'BREAKING CHANGES'
+        }
+      })
+
+      return commit
+    },
+    groupBy: 'type',
+    commitGroupsSort: 'title',
+    commitsSort: ['type', 'shortDesc'],
+    noteGroupsSort: 'title',
+    notesSort: compareFunc
+  }
+}
+
+
+/***/ }),
 /* 850 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -70405,7 +71687,17 @@ module.exports = copyObject;
 
 /***/ }),
 /* 876 */,
-/* 877 */,
+/* 877 */
+/***/ (function(module) {
+
+"use strict";
+
+module.exports = function(val) {
+  return Array.isArray(val) ? val : [val];
+};
+
+
+/***/ }),
 /* 878 */
 /***/ (function(module) {
 
@@ -73780,7 +75072,23 @@ module.exports.sync = (fp, opts) => {
 
 
 /***/ }),
-/* 889 */,
+/* 889 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const Q = __webpack_require__(885)
+const parserOpts = __webpack_require__(279)
+const writerOpts = __webpack_require__(542)
+
+module.exports = Q.all([parserOpts, writerOpts])
+  .spread((parserOpts, writerOpts) => {
+    return { parserOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 890 */,
 /* 891 */
 /***/ (function(module) {
@@ -74441,7 +75749,43 @@ module.exports = __webpack_require__(669).deprecate;
 
 /***/ }),
 /* 918 */,
-/* 919 */,
+/* 919 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(306)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 920 */
 /***/ (function(module, __unusedexports, __webpack_require__) {
 
@@ -76409,7 +77753,28 @@ module.exports = [["0","\u0000",127],["8141","갂갃갅갆갋",4,"갘갞갟갡�
 module.exports = {"uChars":[128,165,169,178,184,216,226,235,238,244,248,251,253,258,276,284,300,325,329,334,364,463,465,467,469,471,473,475,477,506,594,610,712,716,730,930,938,962,970,1026,1104,1106,8209,8215,8218,8222,8231,8241,8244,8246,8252,8365,8452,8454,8458,8471,8482,8556,8570,8596,8602,8713,8720,8722,8726,8731,8737,8740,8742,8748,8751,8760,8766,8777,8781,8787,8802,8808,8816,8854,8858,8870,8896,8979,9322,9372,9548,9588,9616,9622,9634,9652,9662,9672,9676,9680,9702,9735,9738,9793,9795,11906,11909,11913,11917,11928,11944,11947,11951,11956,11960,11964,11979,12284,12292,12312,12319,12330,12351,12436,12447,12535,12543,12586,12842,12850,12964,13200,13215,13218,13253,13263,13267,13270,13384,13428,13727,13839,13851,14617,14703,14801,14816,14964,15183,15471,15585,16471,16736,17208,17325,17330,17374,17623,17997,18018,18212,18218,18301,18318,18760,18811,18814,18820,18823,18844,18848,18872,19576,19620,19738,19887,40870,59244,59336,59367,59413,59417,59423,59431,59437,59443,59452,59460,59478,59493,63789,63866,63894,63976,63986,64016,64018,64021,64025,64034,64037,64042,65074,65093,65107,65112,65127,65132,65375,65510,65536],"gbChars":[0,36,38,45,50,81,89,95,96,100,103,104,105,109,126,133,148,172,175,179,208,306,307,308,309,310,311,312,313,341,428,443,544,545,558,741,742,749,750,805,819,820,7922,7924,7925,7927,7934,7943,7944,7945,7950,8062,8148,8149,8152,8164,8174,8236,8240,8262,8264,8374,8380,8381,8384,8388,8390,8392,8393,8394,8396,8401,8406,8416,8419,8424,8437,8439,8445,8482,8485,8496,8521,8603,8936,8946,9046,9050,9063,9066,9076,9092,9100,9108,9111,9113,9131,9162,9164,9218,9219,11329,11331,11334,11336,11346,11361,11363,11366,11370,11372,11375,11389,11682,11686,11687,11692,11694,11714,11716,11723,11725,11730,11736,11982,11989,12102,12336,12348,12350,12384,12393,12395,12397,12510,12553,12851,12962,12973,13738,13823,13919,13933,14080,14298,14585,14698,15583,15847,16318,16434,16438,16481,16729,17102,17122,17315,17320,17402,17418,17859,17909,17911,17915,17916,17936,17939,17961,18664,18703,18814,18962,19043,33469,33470,33471,33484,33485,33490,33497,33501,33505,33513,33520,33536,33550,37845,37921,37948,38029,38038,38064,38065,38066,38069,38075,38076,38078,39108,39109,39113,39114,39115,39116,39265,39394,189000]};
 
 /***/ }),
-/* 962 */,
+/* 962 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(422)
+const parserOpts = __webpack_require__(147)
+const recommendedBumpOpts = __webpack_require__(171)
+const writerOpts = __webpack_require__(849)
+
+module.exports = presetOpts
+
+function presetOpts (cb) {
+  Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+    .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+      cb(null, { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts })
+    })
+}
+
+
+/***/ }),
 /* 963 */,
 /* 964 */,
 /* 965 */,
@@ -77151,9 +78516,62 @@ module.exports = exports['default'];
 
 
 /***/ }),
-/* 980 */,
+/* 980 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+const Q = __webpack_require__(885)
+const conventionalChangelog = __webpack_require__(198)
+const parserOpts = __webpack_require__(792)
+const recommendedBumpOpts = __webpack_require__(982)
+const writerOpts = __webpack_require__(812)
+
+module.exports = Q.all([conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts])
+  .spread((conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts) => {
+    return { conventionalChangelog, parserOpts, recommendedBumpOpts, writerOpts }
+  })
+
+
+/***/ }),
 /* 981 */,
-/* 982 */,
+/* 982 */
+/***/ (function(module, __unusedexports, __webpack_require__) {
+
+"use strict";
+
+
+const parserOpts = __webpack_require__(792)
+
+module.exports = {
+  parserOpts,
+
+  whatBump: (commits) => {
+    let level = 2
+    let breakings = 0
+    let features = 0
+
+    commits.forEach(commit => {
+      if (commit.notes.length > 0) {
+        breakings += commit.notes.length
+        level = 0
+      } else if (commit.type === 'feat') {
+        features += 1
+        if (level === 2) {
+          level = 1
+        }
+      }
+    })
+
+    return {
+      level: level,
+      reason: `There are ${breakings} BREAKING CHANGES and ${features} features`
+    }
+  }
+}
+
+
+/***/ }),
 /* 983 */,
 /* 984 */
 /***/ (function(__unusedmodule, exports, __webpack_require__) {
