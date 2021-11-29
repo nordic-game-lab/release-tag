@@ -25,8 +25,12 @@ async function run() {
         shell: true,
       })
       body = result.stdout
+      let lines = body.split('\n')
+      // Cleanup output
+      lines = lines.filter(line => !line.includes(tag) && !line.includes('Done in'))
+      body = lines.join('\n').trim()
       console.log('Changelog body:')
-      console.log(result.stdout)
+      console.log(body)
     } else {
       body = ''
     }
