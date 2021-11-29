@@ -20,7 +20,7 @@ async function run() {
     let bodyCommand = core.getInput('body_command', { required: false }) || null
     let body: string
     if (bodyCommand) {
-      bodyCommand = bodyCommand.replace(/(yarn (run)?)/, '$1 --silent')
+      bodyCommand = bodyCommand.replace(/(yarn( run)?)/, '$1 --silent')
       const result = await execaCommand(bodyCommand, {
         stdio: 'pipe',
         shell: true,

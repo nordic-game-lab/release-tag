@@ -5302,7 +5302,7 @@ function run() {
             let bodyCommand = core.getInput('body_command', { required: false }) || null;
             let body;
             if (bodyCommand) {
-                bodyCommand = bodyCommand.replace(/(yarn (run)?)/, '$1 --silent');
+                bodyCommand = bodyCommand.replace(/(yarn( run)?)/, '$1 --silent');
                 const result = yield execa_1.command(bodyCommand, {
                     stdio: 'pipe',
                     shell: true,
