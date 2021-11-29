@@ -5299,9 +5299,10 @@ function run() {
             // This removes the 'refs/tags' portion of the string, i.e. from 'refs/tags/v1.10.15' to 'v1.10.15'
             const tag = tagName.replace('refs/tags/', '');
             const releaseName = core.getInput('release_name', { required: false }) || tag;
-            const bodyCommand = core.getInput('body_command', { required: false }) || null;
+            let bodyCommand = core.getInput('body_command', { required: false }) || null;
             let body;
             if (bodyCommand) {
+                bodyCommand = bodyCommand.replace(/(yarn (run)?)/, '$1 --silent');
                 const result = yield execa_1.command(bodyCommand, {
                     stdio: 'pipe',
                     shell: true,
@@ -5309,7 +5310,7 @@ function run() {
                 body = result.stdout;
                 let lines = body.split('\n');
                 // Cleanup output
-                lines = lines.filter(line => !line.includes(tag) && !line.includes('Done in'));
+                lines = lines.filter(line => !line.includes(tag));
                 body = lines.join('\n').trim();
                 console.log('Changelog body:');
                 console.log(body);

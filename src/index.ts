@@ -17,9 +17,10 @@ async function run() {
     const tag = tagName.replace('refs/tags/', '')
     const releaseName =
       core.getInput('release_name', { required: false }) || tag
-    const bodyCommand = core.getInput('body_command', { required: false }) || null
+    let bodyCommand = core.getInput('body_command', { required: false }) || null
     let body: string
     if (bodyCommand) {
+      bodyCommand = bodyCommand.replace(/(yarn (run)?)/, '$1 --silent')
       const result = await execaCommand(bodyCommand, {
         stdio: 'pipe',
         shell: true,
@@ -27,7 +28,7 @@ async function run() {
       body = result.stdout
       let lines = body.split('\n')
       // Cleanup output
-      lines = lines.filter(line => !line.includes(tag) && !line.includes('Done in'))
+      lines = lines.filter(line => !line.includes(tag))
       body = lines.join('\n').trim()
       console.log('Changelog body:')
       console.log(body)
