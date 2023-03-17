@@ -6,15 +6,16 @@
   "author": "Guillaume CHAU",
   "license": "MIT",
   "scripts": {
-    "build": "ncc build src/index.ts"
+    "build": "rm -rf ./dist && ncc build src/index.ts"
   },
   "dependencies": {
     "@actions/core": "^1.2.3",
     "@actions/github": "^2.1.1",
-    "conventional-changelog": "^3.1.24"
+    "changelogen": "^0.5.1"
   },
   "devDependencies": {
-    "@types/conventional-changelog": "^3.1.1",
-    "@zeit/ncc": "^0.22.1"
+    "@types/node": "^18.15.3",
+    "@vercel/ncc": "^0.36.1",
+    "typescript": "^5.0.2"
   }
 }
