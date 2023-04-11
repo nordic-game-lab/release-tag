@@ -607,7 +607,7 @@ const isWindows = process.platform === 'win32' ||
 
 const path = __webpack_require__(1017)
 const COLON = isWindows ? ';' : ':'
-const isexe = __webpack_require__(6352)
+const isexe = __webpack_require__(4555)
 
 const getNotFoundError = (cmd) =>
   Object.assign(new Error(`not found: ${cmd}`), { code: 'ENOENT' })

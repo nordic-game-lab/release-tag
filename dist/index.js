@@ -994,7 +994,7 @@ exports.toCommandProperties = toCommandProperties;
 
 /***/ }),
 
-/***/ 1512:
+/***/ 9505:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -1047,7 +1047,7 @@ exports.Context = Context;
 
 /***/ }),
 
-/***/ 341:
+/***/ 129:
 /***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
@@ -1062,8 +1062,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 // Originally pulled from https://github.com/JasonEtco/actions-toolkit/blob/master/src/github.ts
 const graphql_1 = __nccwpck_require__(5986);
-const rest_1 = __nccwpck_require__(2425);
-const Context = __importStar(__nccwpck_require__(1512));
+const rest_1 = __nccwpck_require__(8696);
+const Context = __importStar(__nccwpck_require__(9505));
 const httpClient = __importStar(__nccwpck_require__(9557));
 // We need this in order to extend Octokit
 rest_1.Octokit.prototype = new rest_1.Octokit();
@@ -3292,7 +3292,7 @@ exports.paginateRest = paginateRest;
 
 /***/ }),
 
-/***/ 1186:
+/***/ 4173:
 /***/ ((__unused_webpack_module, exports) => {
 
 "use strict";
@@ -16864,23 +16864,23 @@ exports.request = request;
 
 /***/ }),
 
-/***/ 2425:
+/***/ 8696:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const { requestLog } = __nccwpck_require__(1186);
+const { requestLog } = __nccwpck_require__(4173);
 const {
   restEndpointMethods
 } = __nccwpck_require__(3292);
 
-const Core = __nccwpck_require__(1433);
+const Core = __nccwpck_require__(1250);
 
 const CORE_PLUGINS = [
-  __nccwpck_require__(1524),
-  __nccwpck_require__(6560), // deprecated: remove in v17
+  __nccwpck_require__(6100),
+  __nccwpck_require__(1272), // deprecated: remove in v17
   requestLog,
-  __nccwpck_require__(2005),
+  __nccwpck_require__(9502),
   restEndpointMethods,
-  __nccwpck_require__(9753),
+  __nccwpck_require__(5471),
 
   __nccwpck_require__(5580) // deprecated: remove in v17
 ];
@@ -16914,7 +16914,7 @@ module.exports = Octokit;
 
 /***/ }),
 
-/***/ 12:
+/***/ 8050:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = Octokit;
@@ -16922,7 +16922,7 @@ module.exports = Octokit;
 const { request } = __nccwpck_require__(8291);
 const Hook = __nccwpck_require__(4910);
 
-const parseClientOptions = __nccwpck_require__(4555);
+const parseClientOptions = __nccwpck_require__(2344);
 
 function Octokit(plugins, options) {
   options = options || {};
@@ -16950,23 +16950,23 @@ function Octokit(plugins, options) {
 
 /***/ }),
 
-/***/ 1433:
+/***/ 1250:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
-const factory = __nccwpck_require__(5210);
+const factory = __nccwpck_require__(7912);
 
 module.exports = factory();
 
 
 /***/ }),
 
-/***/ 5210:
+/***/ 7912:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = factory;
 
-const Octokit = __nccwpck_require__(12);
-const registerPlugin = __nccwpck_require__(3041);
+const Octokit = __nccwpck_require__(8050);
+const registerPlugin = __nccwpck_require__(4171);
 
 function factory(plugins) {
   const Api = Octokit.bind(null, plugins || []);
@@ -16977,7 +16977,7 @@ function factory(plugins) {
 
 /***/ }),
 
-/***/ 4555:
+/***/ 2344:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = parseOptions;
@@ -16986,7 +16986,7 @@ const { Deprecation } = __nccwpck_require__(3595);
 const { getUserAgent } = __nccwpck_require__(3318);
 const once = __nccwpck_require__(9873);
 
-const pkg = __nccwpck_require__(2088);
+const pkg = __nccwpck_require__(6488);
 
 const deprecateOptionsTimeout = once((log, deprecation) =>
   log.warn(deprecation)
@@ -17073,12 +17073,12 @@ function parseOptions(options, log, hook) {
 
 /***/ }),
 
-/***/ 3041:
+/***/ 4171:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = registerPlugin;
 
-const factory = __nccwpck_require__(5210);
+const factory = __nccwpck_require__(7912);
 
 function registerPlugin(plugins, pluginFunction) {
   return factory(
@@ -17089,7 +17089,7 @@ function registerPlugin(plugins, pluginFunction) {
 
 /***/ }),
 
-/***/ 394:
+/***/ 742:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticate;
@@ -17148,7 +17148,7 @@ function authenticate(state, options) {
 
 /***/ }),
 
-/***/ 1736:
+/***/ 5242:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticationBeforeRequest;
@@ -17198,7 +17198,7 @@ function authenticationBeforeRequest(state, options) {
 
 /***/ }),
 
-/***/ 6560:
+/***/ 1272:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticationPlugin;
@@ -17208,9 +17208,9 @@ const once = __nccwpck_require__(9873);
 
 const deprecateAuthenticate = once((log, deprecation) => log.warn(deprecation));
 
-const authenticate = __nccwpck_require__(394);
-const beforeRequest = __nccwpck_require__(1736);
-const requestError = __nccwpck_require__(7366);
+const authenticate = __nccwpck_require__(742);
+const beforeRequest = __nccwpck_require__(5242);
+const requestError = __nccwpck_require__(6529);
 
 function authenticationPlugin(octokit, options) {
   if (options.auth) {
@@ -17236,7 +17236,7 @@ function authenticationPlugin(octokit, options) {
 
 /***/ }),
 
-/***/ 7366:
+/***/ 6529:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticationRequestError;
@@ -17298,14 +17298,14 @@ function authenticationRequestError(state, error, options) {
 
 /***/ }),
 
-/***/ 1083:
+/***/ 7145:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticationBeforeRequest;
 
 const btoa = __nccwpck_require__(3014);
 
-const withAuthorizationPrefix = __nccwpck_require__(8180);
+const withAuthorizationPrefix = __nccwpck_require__(2935);
 
 function authenticationBeforeRequest(state, options) {
   if (typeof state.auth === "string") {
@@ -17358,7 +17358,7 @@ function authenticationBeforeRequest(state, options) {
 
 /***/ }),
 
-/***/ 1524:
+/***/ 6100:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticationPlugin;
@@ -17367,10 +17367,10 @@ const { createTokenAuth } = __nccwpck_require__(9780);
 const { Deprecation } = __nccwpck_require__(3595);
 const once = __nccwpck_require__(9873);
 
-const beforeRequest = __nccwpck_require__(1083);
-const requestError = __nccwpck_require__(9536);
-const validate = __nccwpck_require__(8793);
-const withAuthorizationPrefix = __nccwpck_require__(8180);
+const beforeRequest = __nccwpck_require__(7145);
+const requestError = __nccwpck_require__(9700);
+const validate = __nccwpck_require__(1670);
+const withAuthorizationPrefix = __nccwpck_require__(2935);
 
 const deprecateAuthBasic = once((log, deprecation) => log.warn(deprecation));
 const deprecateAuthObject = once((log, deprecation) => log.warn(deprecation));
@@ -17441,7 +17441,7 @@ function authenticationPlugin(octokit, options) {
 
 /***/ }),
 
-/***/ 9536:
+/***/ 9700:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = authenticationRequestError;
@@ -17509,7 +17509,7 @@ function authenticationRequestError(state, error, options) {
 
 /***/ }),
 
-/***/ 8793:
+/***/ 1670:
 /***/ ((module) => {
 
 module.exports = validateAuth;
@@ -17537,7 +17537,7 @@ function validateAuth(auth) {
 
 /***/ }),
 
-/***/ 8180:
+/***/ 2935:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = withAuthorizationPrefix;
@@ -17567,7 +17567,7 @@ function withAuthorizationPrefix(authorization) {
 
 /***/ }),
 
-/***/ 2005:
+/***/ 9502:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = paginatePlugin;
@@ -17581,12 +17581,12 @@ function paginatePlugin(octokit) {
 
 /***/ }),
 
-/***/ 9753:
+/***/ 5471:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 module.exports = octokitValidate;
 
-const validate = __nccwpck_require__(5926);
+const validate = __nccwpck_require__(1181);
 
 function octokitValidate(octokit) {
   octokit.hook.before("request", validate.bind(null, octokit));
@@ -17595,7 +17595,7 @@ function octokitValidate(octokit) {
 
 /***/ }),
 
-/***/ 5926:
+/***/ 1181:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
@@ -25043,7 +25043,7 @@ isStream.transform = function (stream) {
 
 /***/ }),
 
-/***/ 6352:
+/***/ 4555:
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 var fs = __nccwpck_require__(7147)
@@ -40023,7 +40023,7 @@ var isWindows = process.platform === 'win32' ||
 
 var path = __nccwpck_require__(1017)
 var COLON = isWindows ? ';' : ':'
-var isexe = __nccwpck_require__(6352)
+var isexe = __nccwpck_require__(4555)
 
 function getNotFoundError (cmd) {
   var er = new Error('not found: ' + cmd)
@@ -40703,7 +40703,7 @@ try {
 
 /***/ }),
 
-/***/ 7145:
+/***/ 5379:
 /***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
 
 "use strict";
@@ -40758,8 +40758,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(7733));
-const github_1 = __nccwpck_require__(341);
-const changelog_js_1 = __nccwpck_require__(7145);
+const github_1 = __nccwpck_require__(129);
+const changelog_js_1 = __nccwpck_require__(5379);
 async function run() {
     try {
         // Get authenticated GitHub client (Ocktokit): https://github.com/actions/toolkit/tree/master/packages/github#usage
@@ -53849,7 +53849,7 @@ exports.withoutTrailingSlash = withoutTrailingSlash;
 
 /***/ }),
 
-/***/ 2088:
+/***/ 6488:
 /***/ ((module) => {
 
 "use strict";
