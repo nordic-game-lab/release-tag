@@ -40719,6 +40719,7 @@ async function generateChangelog(cwd, newVersion) {
     // Parse commits as conventional commits
     const commits = (0, changelogen_1.parseCommits)(rawCommits, config).filter((c) => config.types[c.type] &&
         !(c.type === 'chore' && c.scope === 'deps' && !c.isBreaking));
+    console.log('Parsed commits:', commits);
     // Generate markdown
     const markdown = await (0, changelogen_1.generateMarkDown)(commits, config);
     return markdown;
