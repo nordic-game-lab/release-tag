@@ -18,9 +18,16 @@ async function run() {
     const releaseName =
       core.getInput('release_name', { required: false }) || tag
 
-    console.log('Tag:', tag, 'Release name:', releaseName)
+    const releases = await github.repos.listReleases({
+      owner,
+      repo,
+      per_page: 1,
+    })
+    const previousTag = releases.data[0].tag_name
 
-    let body = await generateChangelog(process.cwd(), tag.replace(/^v/, ''))
+    console.log(`${previousTag} => ${tag}`)
+
+    let body = await generateChangelog(process.cwd(), previousTag, tag.replace(/^v/, ''))
     
     let lines = body.split('\n')
     // Cleanup output

@@ -5,8 +5,9 @@ import {
   loadChangelogConfig,
 } from 'changelogen'
 
-export async function generateChangelog (cwd: string, newVersion: string) {
+export async function generateChangelog (cwd: string, from: string, newVersion: string) {
   const config = await loadChangelogConfig(cwd, {
+    from,
     newVersion,
   })
 
