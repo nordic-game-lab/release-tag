@@ -40771,6 +40771,7 @@ async function run() {
         // This removes the 'refs/tags' portion of the string, i.e. from 'refs/tags/v1.10.15' to 'v1.10.15'
         const tag = tagName.replace('refs/tags/', '');
         const releaseName = core.getInput('release_name', { required: false }) || tag;
+        console.log('Tag:', tag, 'Release name:', releaseName);
         let body = await (0, changelog_js_1.generateChangelog)(process.cwd(), tag.replace(/^v/, ''));
         let lines = body.split('\n');
         // Cleanup output

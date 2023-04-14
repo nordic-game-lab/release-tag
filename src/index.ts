@@ -18,6 +18,8 @@ async function run() {
     const releaseName =
       core.getInput('release_name', { required: false }) || tag
 
+    console.log('Tag:', tag, 'Release name:', releaseName)
+
     let body = await generateChangelog(process.cwd(), tag.replace(/^v/, ''))
     
     let lines = body.split('\n')
