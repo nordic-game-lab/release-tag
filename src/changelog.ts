@@ -19,6 +19,8 @@ export async function generateChangelog (cwd: string, newVersion: string) {
       !(c.type === 'chore' && c.scope === 'deps' && !c.isBreaking)
   )
 
+  console.log('Parsed commits:', commits)
+
   // Generate markdown
   const markdown = await generateMarkDown(commits, config)
 
