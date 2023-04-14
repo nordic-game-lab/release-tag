@@ -40716,6 +40716,7 @@ async function generateChangelog(cwd, newVersion) {
         newVersion,
     });
     const rawCommits = await (0, changelogen_1.getGitDiff)(config.from, config.to);
+    console.log('From:', config.from, 'To:', config.to, 'Raw commits:', rawCommits);
     // Parse commits as conventional commits
     const commits = (0, changelogen_1.parseCommits)(rawCommits, config).filter((c) => config.types[c.type] &&
         !(c.type === 'chore' && c.scope === 'deps' && !c.isBreaking));
