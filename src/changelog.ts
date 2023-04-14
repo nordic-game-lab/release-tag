@@ -12,6 +12,8 @@ export async function generateChangelog (cwd: string, newVersion: string) {
 
   const rawCommits = await getGitDiff(config.from, config.to)
 
+  console.log('From:', config.from, 'To:', config.to, 'Raw commits:', rawCommits)
+
   // Parse commits as conventional commits
   const commits = parseCommits(rawCommits, config).filter(
     (c) =>
