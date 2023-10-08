@@ -28,7 +28,7 @@ jobs:
 
       - name: Create Release for Tag
         id: release_tag
-        uses: Akryum/release-tag
+        uses: nordic-game-lab/release-tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
